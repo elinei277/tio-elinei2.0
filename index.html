@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Pokemon</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header>
+<h1>pokemon</h1>
+</header>
+
+<!-- LAYOUT: MENU LATERAL (ESQ) + VÍDEO (DIR) -->
+<div class="layout">
+<!-- LATERAL ESQUERDA -->
+<aside class="sidebar compacto">
+<!-- Seletor de tema -->
+<section style="padding:12px 0;">
+<label for="tema" style="color:#BDC3C7; margin-right:8px;">ESCOLHA O TEMA:</label>
+<select id="tema">
+<option value="LOUVOR">tipagens dde pokemon</option>
+<option value="MENSAGENS">MENSAGENS</option>
+<option value="INFANTIL">INFANTIL</option>
+<option value="AULAS">AULAS</option>
+</select>
+</section>
+
+<!-- Menu dinâmico gerado via JS -->
+<nav class="nav-vertical" aria-label="Lista de vídeos do tema">
+<ul id="menu-temas"><!-- Itens gerados via JS --></ul>
+</nav>
+
+<!-- Menu fixo adicional -->
+<br>
+<h1 style="font-size:15px; color:#f0f0f0; margin:16px 0; text-align:left;">
+VÍDEOS EXTERNOS DO YOUTUBE👇
+</h1>
+<nav class="nav-vertical" aria-label="Vídeos fixos">
+<ul>
+<li><a href="https://youtu.be/cgEnBkmcpuQ?si=paA3pkAIp3lgAmjQ&quot; target="_blank">CantaJuego - Soy Una Taza (Version Mexico)</a></li>
+<li><a href="https://youtu.be/zWW6PUom-8o?si=IdhsyI372HIguMJY&quot; target="_blank">Morar no Sertão - Nem Que A Vaca Tussa</a></li>
+<li><a href="https://youtu.be/RSXJEkzws2o?si=krxwF-8-ZuPxLo8K&quot; target="_blank">Eu me remecho muito - Madagascar</a></li>
+<li><a href="https://youtu.be/orxxp-3gBiE?si=oViIQTT_iWpsrC8l&quot; target="_blank">Mariana - Galinha Pintadinha</a></li>
+<li><a href="https://youtu.be/Tdwy3BZe61s?si=As38T49IC695wKE0&quot; target="_blank">Pedro, Tiago, João no barquinho - 3 Palavrinhas</a></li>
+</ul>
+</nav>
+</aside>
+
+<!-- PLAYER À DIREITA -->
+<main class="player">
+<div class="video-box">
+<iframe
+class="video-frame"
+width="540"
+height="310"
+src="https://www.youtube.com/embed/kNJPalON82E&quot;
+title="Player de vídeo"
+frameborder="0"
+allowfullscreen
+></iframe>
+
+<div class="info">
+<h3>Eu Sou Teu Pai</h3>
+<p>Valesca Mayssa.</p>
+</div>
+</div>
+</main>
+</div>
+
+<!-- JavaScript -->
+<script>
+// Mapa de temas → lista de vídeos
+const TEMAS = {
+pokemon: [
+{ titulo: "TUDO que você PRECISA SABER sobre Pokémon!",
+autor: "Kaka - Mestre Pokémon!",
+url: "https://youtu.be/QnlTKcqdeKo?si=T_u_CJpNWn4fDuB2";
+},
+{ titulo: "Como FUNCIONAM as RESISTÊNCIAS em Pokémon?!",
+autor:"Kaka - Mestre Pokémon!",
+url: "https://youtu.be/1nsFTiq1_xs?si=OtNjkUeuslPdmZwY;
+},
+{ titulo: "Explicando a Função de todos os Pokémon Lendários em 25 Minutos!",
+autor: "Danuki",
+url: "https://youtu.be/mue-XG4SjXY?si=vjuUMCDJxpU611o3";
+},
+],
+MENSAGENS: [
+{ titulo: "ENSINAMOS O ZÉ RENACHO JOGAR POKÉMON COMPETITIVO !!",
+autor: "LeeGengar",
+url: "https://youtu.be/2s4rfgAJTwU?si=tQnjxlIhhvellp4M";
+},
+{ titulo: "As 10 melhores TROCAS nos jogos de Pokémon!",
+autor: "Miguezod",
+url: "https://youtu.be/cOnI46khApA?si=lqLiT1edDdoETmUW";
+},
+],
+INFANTIL: [
+{ titulo: "10 MELHORES POKÉMON INICIAIS E POR QUÊ !!",
+autor: "LeeGengar",
+url: "https://youtu.be/u7L2h237xXA?si=uiA1lgEKc6zqz4N5";
+},
+{ titulo: "10 MELHORES POKÉMON FANTASMA E POR QUÊ !!",
+autor: "LeeGengar",
+url: "https://youtu.be/s3-l2qoIQz4?si=Gg2Fmo6uvqRfruUx";
+},
+],
+AULAS: [
+{ titulo: "Todos os Pokémon Míticos Explicados em 15 Minutos!",
+autor: "Danuki",
+url: "https://youtu.be/jXX2_r8wFAc?si=bFIaQZha4fa6MeI-";
+},
+{ titulo: "Esses POKÉMONS PODEROSOS Foram RESSUSCITADOS Para Travar Uma BATALHA LENDÁRIA",
+autor: "Hora do Recap",
+url: "https://youtu.be/w7-BZG1M82o?si=Lfy9NeS6TkuelZ8F;
+},
+],
+};
+
+// Seletores
+const selectTema = document.getElementById("tema");
+const menuUl = document.getElementById("menu-temas");
+const iframeEl = document.querySelector(".video-box iframe");
+const infoTitulo = document.querySelector(".info h3");
+const infoAutor = document.querySelector(".info p");
+
+// Converte URL normal do YouTube para /embed
+function toEmbed(url) {
+try {
+const u = new URL(url);
+const id = u.searchParams.get("v");
+if (id) return `https://www.youtube.com/embed/${id}`;
+if (u.hostname.includes("youtu.be")) return `https://www.youtube.com/embed/${u.pathname.slice(1)}`;
+return url;
+} catch {
+return url;
+}
+}
+
+// Renderiza o menu com base no tema
+function renderMenu(tema) {
+const lista = TEMAS[tema] || [];
+menuUl.innerHTML = "";
+
+lista.forEach((video) => {
+const li = document.createElement("li");
+const a = document.createElement("a");
+a.href = "#";
+a.textContent = video.titulo.toUpperCase();
+a.setAttribute("role", "button");
+a.addEventListener("click", (e) => {
+e.preventDefault();
+trocarVideo(video);
+});
+li.appendChild(a);
+menuUl.appendChild(li);
+});
+
+if (lista.length) trocarVideo(lista[0]);
+}
+
+// Troca o vídeo e informações
+function trocarVideo(video) {
+iframeEl.src = toEmbed(video.url);
+infoTitulo.textContent = video.titulo.toUpperCase();
+infoAutor.textContent = `${video.autor.toUpperCase()}.`;
+}
+
+// Inicialização
+renderMenu(selectTema.value);
+selectTema.addEventListener("change", () => renderMenu(selectTema.value));
+</script>
+</body>
+</html>
+```
